@@ -239,7 +239,7 @@ const GameScreen = ({
     const secs = (seconds % 60).toString().padStart(2, '0');
     return `${mins}:${secs}`;
   };
-  return <div className="relative flex flex-col w-full h-screen max-h-[80vh]">
+  return <div className="relative flex flex-col w-full h-screen max-h-[80vh] my-0 bg-stone-50 rounded-full">
       <GameHUD currentDay={currentDay} maxDays={MAX_DAYS} gameTime={gameTime} chaosMode={chaosMode} score={score} onPause={onPause} formatTime={formatTime} />
       <StressBar stressLevel={stressLevel} />
       <GameArea gameAreaRef={gameAreaRef} activeTasks={activeTasks} handleTaskClick={handleTaskClick} handleTaskTimeout={handleTaskTimeout} taskQueue={taskQueue} onTaskStart={handleQueueTaskStart} queueTaskToExec={queueTaskToExec} queuePopupOpen={queuePopupOpen} getQueueTaskTimeLeft={getQueueTaskTimeLeft} handleQueuePopupComplete={handleQueuePopupComplete} className="mx-0 py-[240px]" />

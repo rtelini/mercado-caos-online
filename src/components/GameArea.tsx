@@ -1,4 +1,3 @@
-
 import React from "react";
 import Task, { TaskType } from "./Task";
 import TaskQueuePanel from "./TaskQueuePanel";
@@ -67,15 +66,7 @@ const GameArea: React.FC<GameAreaProps> = ({
         getQueueTaskTimeLeft={getQueueTaskTimeLeft}
       />
     </div>
-    
-    {queueTaskToExec && queuePopupOpen && (
-      <div className="task-popup-container">
-        <TaskPopup
-          taskType={queueTaskToExec.type}
-          onComplete={handleQueuePopupComplete}
-        />
-      </div>
-    )}
+    {/* Removido o pop-up daqui, agora será exibido fora do tabuleiro */}
   </div>
 );
 

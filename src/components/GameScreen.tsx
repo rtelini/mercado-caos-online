@@ -296,6 +296,17 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
         getQueueTaskTimeLeft={getQueueTaskTimeLeft}
         handleQueuePopupComplete={handleQueuePopupComplete}
       />
+      {/* Novo painel para o pop-up, fora do tabuleiro */}
+      {queueTaskToExec && queuePopupOpen && (
+        <div className="w-full flex justify-center mt-6">
+          <div className="max-w-xl w-full">
+            <TaskPopup
+              taskType={queueTaskToExec.type}
+              onComplete={handleQueuePopupComplete}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

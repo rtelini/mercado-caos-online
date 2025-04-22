@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import Task, { TaskType } from './Task';
@@ -19,13 +20,6 @@ interface ActiveTask {
   isUrgent: boolean;
   clicksRequired: number;
   createdAt: number;
-}
-
-interface TaskInQueue {
-  id: string;
-  type: TaskType;
-  timeLimit: number; // tempo para realizar a tarefa NA FILA
-  addedToQueueAt: number; // quando entra na fila
 }
 
 const STRESS_MAX = 100;
@@ -54,7 +48,17 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
   const gameAreaRef = useRef<HTMLDivElement>(null);
   const gameTimerRef = useRef<NodeJS.Timeout | null>(null);
   const taskGeneratorRef = useRef<NodeJS.Timeout | null>(null);
-  const queueTimersRef = useRef<{ [id: string]: NodeJS.Timeout }>({}); // timers das tasks da fila
+
+  // Functions from the useTaskQueue hook
+  const {
+    addTaskToQueue,
+    removeTaskFromQueue,
+    clearAllQueueTimers,
+    getQueueTaskTimeLeft,
+  } = useTaskQueue({
+    onTimeout: handleQueueTaskTimeout, // Definindo antes da declaração 
+    timePerQueueTask: QUEUE_TASK_TIME,
+  });
 
   // Task type pool
   const taskTypes: TaskType[] = [
@@ -68,6 +72,17 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
     'duplicate_order'
   ];
 
+  // Quando a task da fila expira (não resolvida no tempo)
+  const handleQueueTaskTimeout = useCallback((taskId: string, taskType: TaskType) => {
+    setScore(prev => prev - 2);
+    setStressLevel(prev => prev + 8);
+    removeTaskFromQueue(taskId, setTaskQueue);
+    if (queueTaskToExec && queueTaskToExec.id === taskId) {
+      setQueuePopupOpen(false);
+      setQueueTaskToExec(null);
+    }
+  }, [queueTaskToExec, removeTaskFromQueue]);
+
   // Inicialização do jogo
   useEffect(() => {
     startGame();
@@ -76,14 +91,8 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
       if (taskGeneratorRef.current) clearInterval(taskGeneratorRef.current);
       clearAllQueueTimers();
     };
-  }, []);
+  }, [clearAllQueueTimers]);
   
-  // Helper para limpar timers da fila
-  const clearAllQueueTimers = () => {
-    Object.values(queueTimersRef.current).forEach(timer => clearTimeout(timer));
-    queueTimersRef.current = {};
-  };
-
   const startGame = () => {
     setScore(0);
     setStressLevel(0);
@@ -197,16 +206,6 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
     setTaskCounter(prev => prev + 1);
   };
 
-  const {
-    addTaskToQueue,
-    removeTaskFromQueue,
-    clearAllQueueTimers,
-    getQueueTaskTimeLeft,
-  } = useTaskQueue({
-    onTimeout: handleQueueTaskTimeout,
-    timePerQueueTask: QUEUE_TASK_TIME,
-  });
-
   // Change: Ao clicar em task do board, move para fila apenas (não executa pop-up aqui)
   const handleTaskClick = useCallback((taskId: string, taskType: TaskType) => {
     setActiveTasks(prevActive => {
@@ -257,17 +256,6 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
     }
   }, [queueTaskToExec, removeTaskFromQueue]);
 
-  // Quando a task da fila expira (não resolvida no tempo)
-  const handleQueueTaskTimeout = (taskId: string, taskType: TaskType) => {
-    setScore(prev => prev - 2);
-    setStressLevel(prev => prev + 8);
-    removeTaskFromQueue(taskId, setTaskQueue);
-    if (queueTaskToExec && queueTaskToExec.id === taskId) {
-      setQueuePopupOpen(false);
-      setQueueTaskToExec(null);
-    }
-  };
-
   // Game over se o score negativo no fim do dia
   useEffect(() => {
     if (score < 0 && showDayComplete && !gameOver) {
@@ -285,14 +273,7 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
       setGameOver(true);
       onGameOver(score);
     }
-  }, [stressLevel, score, onGameOver, gameOver]);
-
-  // Timer das tasks da fila: barra de progresso
-  const getQueueTaskTimeLeft = (queueTask: TaskInQueue) => {
-    const now = Date.now();
-    const elapsed = (now - queueTask.addedToQueueAt) / 1000;
-    return Math.max(0, queueTask.timeLimit - elapsed);
-  };
+  }, [stressLevel, score, onGameOver, gameOver, clearAllQueueTimers]);
 
   // Formatação de tempo MM:SS
   const formatTime = (seconds: number) => {

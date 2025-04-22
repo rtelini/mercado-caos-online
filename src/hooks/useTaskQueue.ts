@@ -32,11 +32,11 @@ export function useTaskQueue({ onTimeout, timePerQueueTask }: UseTaskQueueOption
     [onTimeout, timePerQueueTask]
   );
 
-  const removeTaskFromQueue = useCallback((taskId: string, setQueue: (q: TaskInQueue[]) => void) => {
+  const removeTaskFromQueue = useCallback((taskId: string, setQueue: React.Dispatch<React.SetStateAction<TaskInQueue[]>>) => {
     clearTimeout(timers.current[taskId]);
     delete timers.current[taskId];
-    // Fix: Properly type the callback function to return TaskInQueue[]
-    setQueue((prev: TaskInQueue[]) => prev.filter((q) => q.id !== taskId));
+    // Fix: Use the correct type for the setState function parameter
+    setQueue(prev => prev.filter((q) => q.id !== taskId));
   }, []);
 
   const clearAllQueueTimers = useCallback(() => {

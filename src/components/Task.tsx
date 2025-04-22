@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { Package2, Truck, X, MessageSquare, Tag, Monitor, ChartBarVertical, PackageCheck } from 'lucide-react';
+import { Package2, Truck, X, MessageSquare, Tag, Monitor, ChartBar, PackageCheck } from 'lucide-react';
 
 export type TaskType = 
   | 'package_missing' 
@@ -74,7 +73,7 @@ const Task = ({
       case 'system_down':
         return <Monitor size={32} />;
       case 'reputation_drop':
-        return <ChartBarVertical size={32} />;
+        return <ChartBar size={32} />;
       case 'duplicate_order':
         return <PackageCheck size={32} />;
       default:
@@ -82,7 +81,6 @@ const Task = ({
     }
   };
   
-  // Get color based on task type
   const getTaskColor = () => {
     switch(type) {
       case 'package_missing':

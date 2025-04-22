@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Package2, Truck, X, MessageSquare, Tag, Monitor, ChartBarVertical, PackageCheck } from 'lucide-react';
+import { Package2, Truck, X, MessageSquare, Tag, Monitor, ChartBar, PackageCheck } from 'lucide-react';
 
 interface HowToPlayScreenProps {
   onBack: () => void;
@@ -15,7 +14,7 @@ const HowToPlayScreen = ({ onBack }: HowToPlayScreenProps) => {
     { icon: <MessageSquare className="text-game-primary" />, description: "Responder mensagem urgente" },
     { icon: <Tag className="text-yellow-500" />, description: "Cupom não aplicado" },
     { icon: <Monitor className="text-blue-500" />, description: "Sistema fora do ar! (3 cliques)" },
-    { icon: <ChartBarVertical className="text-game-danger" />, description: "Reputação caiu! (urgente)" },
+    { icon: <ChartBar className="text-game-danger" />, description: "Reputação caiu! (urgente)" },
     { icon: <PackageCheck className="text-green-500" />, description: "Pedido duplicado" },
   ];
 

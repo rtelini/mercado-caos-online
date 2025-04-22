@@ -1,0 +1,27 @@
+.popup-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-height: 90vh;
+  overflow-y: auto;
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 1rem;
+  pointer-events: none;
+}
+
+.popup-card {
+  background-color: #1a1a1a;
+  color: white;
+  padding: 1rem 1.5rem;
+  border: 2px solid #ffcc00;
+  font-family: 'Press Start 2P', monospace;
+  width: 100%;
+  max-width: 480px;
+  pointer-events: all;
+  box-shadow: 0 0 10px #000;
+  border-radius: 8px;
+}

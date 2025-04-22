@@ -49,17 +49,6 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
   const gameTimerRef = useRef<NodeJS.Timeout | null>(null);
   const taskGeneratorRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Functions from the useTaskQueue hook
-  const {
-    addTaskToQueue,
-    removeTaskFromQueue,
-    clearAllQueueTimers,
-    getQueueTaskTimeLeft,
-  } = useTaskQueue({
-    onTimeout: handleQueueTaskTimeout, // Definindo antes da declaração 
-    timePerQueueTask: QUEUE_TASK_TIME,
-  });
-
   // Task type pool
   const taskTypes: TaskType[] = [
     'package_missing',
@@ -81,7 +70,18 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
       setQueuePopupOpen(false);
       setQueueTaskToExec(null);
     }
-  }, [queueTaskToExec, removeTaskFromQueue]);
+  }, [queueTaskToExec]);
+
+  // Functions from the useTaskQueue hook
+  const {
+    addTaskToQueue,
+    removeTaskFromQueue,
+    clearAllQueueTimers,
+    getQueueTaskTimeLeft,
+  } = useTaskQueue({
+    onTimeout: handleQueueTaskTimeout,
+    timePerQueueTask: QUEUE_TASK_TIME,
+  });
 
   // Inicialização do jogo
   useEffect(() => {

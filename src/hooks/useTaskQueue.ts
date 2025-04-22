@@ -35,7 +35,7 @@ export function useTaskQueue({ onTimeout, timePerQueueTask }: UseTaskQueueOption
   const removeTaskFromQueue = useCallback((taskId: string, setQueue: (q: TaskInQueue[]) => void) => {
     clearTimeout(timers.current[taskId]);
     delete timers.current[taskId];
-    setQueue((prev: TaskInQueue[]) => prev.filter((q) => q.id !== taskId));
+    setQueue((prev) => prev.filter((q) => q.id !== taskId));
   }, []);
 
   const clearAllQueueTimers = useCallback(() => {

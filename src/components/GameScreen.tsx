@@ -1,7 +1,9 @@
+
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import GameHUD from './GameHUD';
 import StressBar from './StressBar';
 import GameArea from './GameArea';
+import { TaskType } from './Task';  // Added this import for TaskType
 import { useTaskQueue, TaskInQueue } from "@/hooks/useTaskQueue";
 
 interface GameScreenProps {

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Package2, Truck, X, MessageSquare, Tag, Monitor, ChartBar, PackageCheck } from 'lucide-react';
 
@@ -61,58 +62,81 @@ const Task = ({
   const getTaskIcon = () => {
     switch(type) {
       case 'package_missing':
-        return <Package2 size={32} />;
+        return <Package2 size={28} className="pixel-effect" />;
       case 'wrong_shipping':
-        return <Truck size={32} />;
+        return <Truck size={28} className="pixel-effect" />;
       case 'canceled_sale':
-        return <X size={32} />;
+        return <X size={28} className="pixel-effect" />;
       case 'urgent_message':
-        return <MessageSquare size={32} />;
+        return <MessageSquare size={28} className="pixel-effect" />;
       case 'coupon_issue':
-        return <Tag size={32} />;
+        return <Tag size={28} className="pixel-effect" />;
       case 'system_down':
-        return <Monitor size={32} />;
+        return <Monitor size={28} className="pixel-effect" />;
       case 'reputation_drop':
-        return <ChartBar size={32} />;
+        return <ChartBar size={28} className="pixel-effect" />;
       case 'duplicate_order':
-        return <PackageCheck size={32} />;
+        return <PackageCheck size={28} className="pixel-effect" />;
       default:
-        return <Package2 size={32} />;
+        return <Package2 size={28} className="pixel-effect" />;
+    }
+  };
+
+  const getTaskLabel = () => {
+    switch(type) {
+      case 'package_missing':
+        return "Cliente não recebeu o pedido";
+      case 'wrong_shipping':
+        return "Erro no frete";
+      case 'canceled_sale':
+        return "Venda cancelada por engano";
+      case 'urgent_message':
+        return "Mensagem urgente no chat";
+      case 'coupon_issue':
+        return "Cupom não aplicado";
+      case 'system_down':
+        return "Sistema fora do ar!";
+      case 'reputation_drop':
+        return "Reputação caiu!";
+      case 'duplicate_order':
+        return "Pedido duplicado";
+      default:
+        return "";
     }
   };
   
   const getTaskColor = () => {
     switch(type) {
       case 'package_missing':
-        return 'text-game-blue bg-game-light-blue';
+        return 'text-game-blue bg-opacity-80 bg-game-light-blue border-[3px] border-game-blue';
       case 'wrong_shipping':
-        return 'text-game-accent bg-orange-100';
+        return 'text-game-accent bg-opacity-80 bg-orange-100 border-[3px] border-game-accent';
       case 'canceled_sale':
-        return 'text-game-danger bg-red-100';
+        return 'text-game-danger bg-opacity-80 bg-red-100 border-[3px] border-game-danger';
       case 'urgent_message':
-        return 'text-game-primary bg-purple-100';
+        return 'text-game-primary bg-opacity-80 bg-purple-100 border-[3px] border-game-primary';
       case 'coupon_issue':
-        return 'text-yellow-500 bg-game-yellow';
+        return 'text-yellow-500 bg-opacity-80 bg-game-yellow border-[3px] border-yellow-500';
       case 'system_down':
-        return 'text-blue-600 bg-blue-100';
+        return 'text-blue-600 bg-opacity-80 bg-blue-100 border-[3px] border-blue-600';
       case 'reputation_drop':
-        return 'text-game-danger bg-red-100';
+        return 'text-game-danger bg-opacity-80 bg-red-100 border-[3px] border-game-danger';
       case 'duplicate_order':
-        return 'text-green-500 bg-green-100';
+        return 'text-green-500 bg-opacity-80 bg-green-100 border-[3px] border-green-500';
       default:
-        return 'text-gray-700 bg-gray-100';
+        return 'text-gray-700 bg-opacity-80 bg-gray-100 border-[3px] border-gray-700';
     }
   };
   
   const progressPercentage = (timeLeft / timeLimit) * 100;
   
   const taskStyles = isUrgent 
-    ? "animate-pulse-task shadow-md" 
-    : "shadow-sm";
+    ? "animate-pulse-task shadow-lg" 
+    : "shadow-md";
   
   return (
     <div 
-      className={`absolute cursor-pointer rounded-lg p-3 ${getTaskColor()} ${taskStyles} animate-fade-in`} 
+      className={`absolute cursor-pointer rounded-lg p-3 ${getTaskColor()} ${taskStyles} animate-fade-in pixel-border`} 
       style={{ 
         left: `${position.x}%`, 
         top: `${position.y}%`, 
@@ -122,14 +146,22 @@ const Task = ({
       onClick={handleClick}
     >
       <div className="flex flex-col items-center">
-        {getTaskIcon()}
+        <div className="w-10 h-10 flex items-center justify-center mb-1">
+          {getTaskIcon()}
+        </div>
+        
+        <span className="text-xs font-pixel text-center mb-1 max-w-[100px] line-clamp-2">
+          {getTaskLabel()}
+        </span>
+        
         {clicksRequired > 1 && (
-          <span className="text-xs mt-1">
+          <span className="text-xs font-pixel mt-0.5 mb-1">
             {clicks}/{clicksRequired} cliques
           </span>
         )}
       </div>
-      <div className="w-full mt-1 bg-gray-200 rounded-full h-1">
+      
+      <div className="w-full mt-1 bg-gray-900 rounded-full h-1">
         <div 
           className={`h-1 rounded-full ${progressPercentage < 30 ? 'bg-red-500' : 'bg-green-500'}`} 
           style={{ width: `${progressPercentage}%` }}

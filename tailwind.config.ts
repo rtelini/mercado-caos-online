@@ -63,18 +63,24 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Game specific colors
+				// Game specific colors - Updated for arcade theme
 				game: {
-					'primary': '#9b87f5',
-					'accent': '#F97316',
-					'danger': '#ea384c',
-					'blue': '#1EAEDB',
+					'primary': '#9b87f5', // Neon purple
+					'accent': '#F97316', // Bright orange
+					'danger': '#ff3358', // Neon red
+					'blue': '#0ea5e9', // Bright blue
 					'yellow': '#FEF7CD',
 					'pink': '#FFDEE2',
 					'light-blue': '#D3E4FD',
 					'gray': '#8E9196',
 					'dark': '#1A1F2C',
+					'neon-green': '#39ff14', // Neon green
+					'neon-pink': '#ff3399', // Neon pink
+					'neon-yellow': '#ffff00', // Neon yellow
 				}
+			},
+			fontFamily: {
+				'pixel': ['"Press Start 2P"', 'cursive'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -113,6 +119,14 @@ export default {
 				'slide-in': {
 					'0%': { transform: 'translateX(-100%)' },
 					'100%': { transform: 'translateX(0)' }
+				},
+				'flicker': {
+					'0%, 100%': { opacity: '0.2' },
+					'50%': { opacity: '0.1' }
+				},
+				'scan': {
+					'0%': { transform: 'translateY(-100%)' },
+					'100%': { transform: 'translateY(100%)' }
 				}
 			},
 			animation: {
@@ -122,6 +136,8 @@ export default {
 				'fade-in': 'fade-in 0.3s ease-out',
 				'fade-out': 'fade-out 0.3s ease-out',
 				'slide-in': 'slide-in 0.3s ease-out',
+				'flicker': 'flicker 0.3s infinite alternate',
+				'scan': 'scan 4s linear infinite',
 			}
 		}
 	},

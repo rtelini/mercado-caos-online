@@ -112,25 +112,26 @@ const Task = ({
   };
   
   const getTaskColor = () => {
+    // Changed all colors to gray variants
     switch(type) {
       case 'package_missing':
-        return 'text-game-blue bg-opacity-80 bg-game-light-blue border-[3px] border-game-blue';
+        return 'text-gray-700 bg-opacity-80 bg-gray-200 border-[3px] border-gray-700';
       case 'wrong_shipping':
-        return 'text-game-accent bg-opacity-80 bg-orange-100 border-[3px] border-game-accent';
+        return 'text-gray-700 bg-opacity-80 bg-gray-200 border-[3px] border-gray-700';
       case 'canceled_sale':
-        return 'text-game-danger bg-opacity-80 bg-red-100 border-[3px] border-game-danger';
+        return 'text-gray-700 bg-opacity-80 bg-gray-200 border-[3px] border-gray-700';
       case 'urgent_message':
-        return 'text-game-primary bg-opacity-80 bg-purple-100 border-[3px] border-game-primary';
+        return 'text-gray-700 bg-opacity-80 bg-gray-200 border-[3px] border-gray-700';
       case 'coupon_issue':
-        return 'text-yellow-500 bg-opacity-80 bg-game-yellow border-[3px] border-yellow-500';
+        return 'text-gray-700 bg-opacity-80 bg-gray-200 border-[3px] border-gray-700';
       case 'system_down':
-        return 'text-blue-600 bg-opacity-80 bg-blue-100 border-[3px] border-blue-600';
+        return 'text-gray-700 bg-opacity-80 bg-gray-200 border-[3px] border-gray-700';
       case 'reputation_drop':
-        return 'text-game-danger bg-opacity-80 bg-red-100 border-[3px] border-game-danger';
+        return 'text-gray-700 bg-opacity-80 bg-gray-200 border-[3px] border-gray-700';
       case 'duplicate_order':
-        return 'text-green-500 bg-opacity-80 bg-green-100 border-[3px] border-green-500';
+        return 'text-gray-700 bg-opacity-80 bg-gray-200 border-[3px] border-gray-700';
       default:
-        return 'text-gray-700 bg-opacity-80 bg-gray-100 border-[3px] border-gray-700';
+        return 'text-gray-700 bg-opacity-80 bg-gray-200 border-[3px] border-gray-700';
     }
   };
   

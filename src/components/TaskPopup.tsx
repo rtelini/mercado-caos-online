@@ -46,7 +46,7 @@ const TaskPopup = ({ taskType, onComplete }: TaskPopupProps) => {
       case 'package_missing':
         return (
           <div className="p-4">
-            <DialogTitle className="text-center font-pixel text-xl mb-4 text-game-primary arcade-text-shadow">
+            <DialogTitle className="text-center font-pixel text-xl mb-4 text-gray-200 arcade-text-shadow">
               Entregue o Pacote!
             </DialogTitle>
             
@@ -56,7 +56,7 @@ const TaskPopup = ({ taskType, onComplete }: TaskPopupProps) => {
                   className={`p-4 bg-gray-800 rounded-lg ${packageDeliveryStep === 'package' ? 'border-4 border-green-500' : 'border-4 border-gray-600'} cursor-pointer pixel-border`}
                   onClick={() => setPackageDeliveryStep('package')}
                 >
-                  <Package2 size={48} className="text-game-blue" />
+                  <Package2 size={48} className="text-gray-300" />
                   <span className="block mt-2 font-pixel text-white">Pacote</span>
                 </div>
                 
@@ -98,13 +98,13 @@ const TaskPopup = ({ taskType, onComplete }: TaskPopupProps) => {
       case 'coupon_issue':
         return (
           <div className="p-4">
-            <DialogTitle className="text-center font-pixel text-xl mb-4 text-game-accent arcade-text-shadow">
+            <DialogTitle className="text-center font-pixel text-xl mb-4 text-gray-200 arcade-text-shadow">
               Crie um Cupom Novo!
             </DialogTitle>
             
             <div className="flex flex-col items-center mb-6">
               <div className="flex items-center justify-center mb-4">
-                <Tag size={40} className="text-game-accent mr-2" />
+                <Tag size={40} className="text-gray-300 mr-2" />
               </div>
               
               <div className="w-full mb-4">
@@ -113,13 +113,13 @@ const TaskPopup = ({ taskType, onComplete }: TaskPopupProps) => {
                   value={couponCode}
                   onChange={(e) => setCouponCode(e.target.value)}
                   placeholder="Digite o código do cupom"
-                  className="w-full p-2 bg-gray-800 border-2 border-game-accent text-white font-pixel rounded pixel-border placeholder-gray-500"
+                  className="w-full p-2 bg-gray-800 border-2 border-gray-600 text-white font-pixel rounded pixel-border placeholder-gray-500"
                 />
               </div>
               
               <Button 
                 onClick={() => couponCode.length >= 4 ? handleComplete(true) : null} 
-                className="bg-game-accent hover:bg-game-accent/80 text-white font-pixel pixel-border"
+                className="bg-gray-600 hover:bg-gray-700 text-white font-pixel pixel-border"
                 disabled={couponCode.length < 4}
               >
                 Criar Cupom
@@ -128,7 +128,7 @@ const TaskPopup = ({ taskType, onComplete }: TaskPopupProps) => {
             
             <div className="w-full bg-gray-900 h-2 rounded-full">
               <div 
-                className="h-full bg-orange-500 rounded-full"
+                className="h-full bg-green-500 rounded-full"
                 style={{ width: `${(timeLeft / 10) * 100}%` }}
               ></div>
             </div>
@@ -138,7 +138,7 @@ const TaskPopup = ({ taskType, onComplete }: TaskPopupProps) => {
       case 'duplicate_order':
         return (
           <div className="p-4">
-            <DialogTitle className="text-center font-pixel text-xl mb-4 text-green-500 arcade-text-shadow">
+            <DialogTitle className="text-center font-pixel text-xl mb-4 text-gray-200 arcade-text-shadow">
               Cancele o Pedido Duplicado!
             </DialogTitle>
             
@@ -148,7 +148,7 @@ const TaskPopup = ({ taskType, onComplete }: TaskPopupProps) => {
                   className={`p-4 bg-gray-800 rounded-lg cursor-pointer ${duplicateSelected === 'first' ? 'border-4 border-red-500' : 'border-4 border-gray-600'} pixel-border`}
                   onClick={() => setDuplicateSelected('first')}
                 >
-                  <PackageCheck size={48} className="text-green-500" />
+                  <PackageCheck size={48} className="text-gray-300" />
                   <span className="block mt-2 font-pixel text-white text-center">Pedido #1</span>
                 </div>
                 
@@ -156,7 +156,7 @@ const TaskPopup = ({ taskType, onComplete }: TaskPopupProps) => {
                   className={`p-4 bg-gray-800 rounded-lg cursor-pointer ${duplicateSelected === 'second' ? 'border-4 border-red-500' : 'border-4 border-gray-600'} pixel-border`}
                   onClick={() => setDuplicateSelected('second')}
                 >
-                  <PackageCheck size={48} className="text-green-500" />
+                  <PackageCheck size={48} className="text-gray-300" />
                   <span className="block mt-2 font-pixel text-white text-center">Pedido #2</span>
                 </div>
               </div>
@@ -182,7 +182,7 @@ const TaskPopup = ({ taskType, onComplete }: TaskPopupProps) => {
       case 'urgent_message':
         return (
           <div className="p-4">
-            <DialogTitle className="text-center font-pixel text-xl mb-4 text-game-primary arcade-text-shadow">
+            <DialogTitle className="text-center font-pixel text-xl mb-4 text-gray-200 arcade-text-shadow">
               Responda Rápido!
             </DialogTitle>
             
@@ -203,12 +203,12 @@ const TaskPopup = ({ taskType, onComplete }: TaskPopupProps) => {
                 value={messageText}
                 onChange={(e) => setMessageText(e.target.value)}
                 placeholder="Digite sua resposta..."
-                className="flex-1 p-2 bg-gray-800 border-2 border-game-primary text-white font-pixel rounded-l pixel-border placeholder-gray-500"
+                className="flex-1 p-2 bg-gray-800 border-2 border-gray-600 text-white font-pixel rounded-l pixel-border placeholder-gray-500"
               />
               
               <Button 
                 onClick={() => messageText.length >= 5 ? handleComplete(true) : null} 
-                className="bg-game-primary hover:bg-game-primary/80 rounded-l-none"
+                className="bg-gray-600 hover:bg-gray-700 rounded-l-none"
                 disabled={messageText.length < 5}
               >
                 <Send size={18} />
@@ -217,7 +217,7 @@ const TaskPopup = ({ taskType, onComplete }: TaskPopupProps) => {
             
             <div className="w-full bg-gray-900 h-2 rounded-full">
               <div 
-                className="h-full bg-purple-500 rounded-full"
+                className="h-full bg-green-500 rounded-full"
                 style={{ width: `${(timeLeft / 10) * 100}%` }}
               ></div>
             </div>
@@ -230,7 +230,7 @@ const TaskPopup = ({ taskType, onComplete }: TaskPopupProps) => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={() => handleComplete(false)}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="bg-gray-900 border-0 text-white max-w-md w-11/12 scanlines crt-effect pixel-border">
         {renderTaskContent()}
       </DialogContent>

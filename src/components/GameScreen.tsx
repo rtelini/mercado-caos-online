@@ -150,6 +150,7 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
     
     if (popupTasks.includes(taskType)) {
       setCurrentPopupTask({ id: taskId, type: taskType });
+      // Don't remove the task from activeTasks until the popup is completed
     } else {
       // For simple tasks that complete with a single click
       handleTaskComplete(taskId, taskType);
@@ -224,21 +225,21 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
   return (
     <div className="relative flex flex-col w-full h-screen max-h-[80vh]">
       {/* Game HUD */}
-      <div className="bg-white p-4 border-b flex justify-between items-center">
+      <div className="bg-gray-800 p-4 border-b border-gray-700 flex justify-between items-center">
         <div className="flex items-center gap-4">
           <div>
-            <span className="text-sm font-medium mr-1">Tempo:</span>
-            <span className="text-lg font-bold">{formatTime(gameTime)}</span>
+            <span className="text-sm font-medium mr-1 text-gray-200">Tempo:</span>
+            <span className="text-lg font-bold text-gray-100">{formatTime(gameTime)}</span>
             {chaosMode && (
-              <span className="ml-2 text-xs bg-game-danger text-white px-2 py-1 rounded animate-pulse">
+              <span className="ml-2 text-xs bg-red-500 text-white px-2 py-1 rounded animate-pulse">
                 MODO CAOS
               </span>
             )}
           </div>
           
           <div>
-            <span className="text-sm font-medium mr-1">Pontos:</span>
-            <span className="text-lg font-bold">{score}</span>
+            <span className="text-sm font-medium mr-1 text-gray-200">Pontos:</span>
+            <span className="text-lg font-bold text-gray-100">{score}</span>
           </div>
         </div>
         
@@ -246,14 +247,14 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
           variant="ghost" 
           size="sm" 
           onClick={onPause} 
-          className="text-gray-500 hover:text-gray-700"
+          className="text-gray-300 hover:text-gray-100"
         >
           <PauseIcon size={20} />
         </Button>
       </div>
       
       {/* Stress bar */}
-      <div className="w-full h-3 bg-gray-200">
+      <div className="w-full h-3 bg-gray-600">
         <div 
           className="h-full bg-gradient-to-r from-yellow-400 to-red-500 transition-all duration-300" 
           style={{ width: `${stressLevel}%` }}

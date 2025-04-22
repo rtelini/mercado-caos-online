@@ -48,7 +48,6 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
   const gameTimerRef = useRef<NodeJS.Timeout | null>(null);
   const taskGeneratorRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Task type pool
   const taskTypes: TaskType[] = [
     'package_missing',
     'wrong_shipping',
@@ -60,7 +59,6 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
     'duplicate_order'
   ];
 
-  // Quando a task da fila expira (não resolvida no tempo)
   const handleQueueTaskTimeout = useCallback((taskId: string, taskType: TaskType) => {
     setScore(prev => prev - 2);
     setStressLevel(prev => prev + 8);
@@ -71,7 +69,6 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
     }
   }, [queueTaskToExec]);
 
-  // Functions from the useTaskQueue hook
   const {
     addTaskToQueue,
     removeTaskFromQueue,
@@ -82,7 +79,6 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
     timePerQueueTask: QUEUE_TASK_TIME,
   });
 
-  // Inicialização do jogo
   useEffect(() => {
     startGame();
     return () => {
@@ -204,7 +200,6 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
     setTaskCounter(prev => prev + 1);
   };
 
-  // Change: Ao clicar em task do board, move para fila apenas (não executa pop-up aqui)
   const handleTaskClick = useCallback((taskId: string, taskType: TaskType) => {
     setActiveTasks(prevActive => {
       const found = prevActive.find(t => t.id === taskId);
@@ -223,7 +218,6 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
     });
   }, [addTaskToQueue, taskQueue]);
 
-  // Task do board desaparece se expirar, não pontua
   const handleTaskTimeout = useCallback((taskId: string) => {
     const task = activeTasks.find(t => t.id === taskId);
     if (task) {
@@ -233,13 +227,13 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
     setActiveTasks(prev => prev.filter(t => t.id !== taskId));
   }, [activeTasks]);
 
-  // Quando abrir tarefa da fila
   const handleQueueTaskStart = (queueTask: TaskInQueue) => {
-    setQueueTaskToExec(queueTask);
-    setQueuePopupOpen(true);
+    if (!queuePopupOpen) {
+      setQueueTaskToExec(queueTask);
+      setQueuePopupOpen(true);
+    }
   };
 
-  // Quando concluir tarefa da fila (sucesso/falha)
   const handleQueuePopupComplete = useCallback((success: boolean) => {
     if (queueTaskToExec) {
       removeTaskFromQueue(queueTaskToExec.id, setTaskQueue);
@@ -250,12 +244,11 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
         setScore(prev => prev - 2);
         setStressLevel(prev => prev + 8);
       }
-      setQueuePopupOpen(false);
       setQueueTaskToExec(null);
+      setQueuePopupOpen(false);
     }
   }, [queueTaskToExec, removeTaskFromQueue]);
 
-  // Game over se o score negativo no fim do dia
   useEffect(() => {
     if (score < 0 && showDayComplete && !gameOver) {
       setGameOver(true);
@@ -263,7 +256,6 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
     }
   }, [score, showDayComplete, onGameOver, gameOver]);
   
-  // Checar estresse
   useEffect(() => {
     if (stressLevel >= STRESS_MAX && !gameOver) {
       if (gameTimerRef.current) clearInterval(gameTimerRef.current);
@@ -274,17 +266,14 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
     }
   }, [stressLevel, score, onGameOver, gameOver, clearAllQueueTimers]);
 
-  // Formatação de tempo MM:SS
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
     const secs = (seconds % 60).toString().padStart(2, '0');
     return `${mins}:${secs}`;
   };
 
-  // Renderização da tela do jogo
   return (
     <div className="relative flex flex-col w-full h-screen max-h-[80vh]">
-      {/* HUD */}
       <div className="bg-gray-800 p-4 border-b border-gray-700 flex justify-between items-center">
         <div className="flex items-center gap-4">
           <div>
@@ -307,19 +296,16 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
           <PauseIcon size={20} />
         </Button>
       </div>
-      {/* Barra de estresse */}
       <div className="w-full h-3 bg-gray-700">
         <div 
           className="h-full bg-gradient-to-r from-gray-400 to-red-500 transition-all duration-300" 
           style={{ width: `${stressLevel}%` }}
         ></div>
       </div>
-      {/* Game area */}
       <div 
         ref={gameAreaRef} 
         className="flex-1 relative bg-[url('https://via.placeholder.com/1000x800?text=Office+Background')] bg-cover bg-center overflow-hidden"
       >
-        {/* Tasks do tabuleiro */}
         {activeTasks.map((task) => (
           <Task
             key={task.id}
@@ -333,8 +319,6 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
             clicksRequired={task.clicksRequired}
           />
         ))}
-
-        {/* Novo painel da fila de tarefas */}
         <TaskQueuePanel
           taskQueue={taskQueue}
           onTaskStart={handleQueueTaskStart}
@@ -343,8 +327,6 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
           getQueueTaskTimeLeft={getQueueTaskTimeLeft}
         />
       </div>
-      
-      {/* Pop-up para execução da tarefa da fila - Agora renderizado fora da área de jogo */}
       {queueTaskToExec && queuePopupOpen && (
         <TaskPopup
           taskType={queueTaskToExec.type}

@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { TaskType } from './Task';
 import { Dialog, DialogContent, DialogFooter, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -10,7 +9,7 @@ interface TaskPopupProps {
   onComplete: (success: boolean) => void;
 }
 
-const TaskPopup = ({ taskType, onComplete }: TaskPopupProps) => {
+const TaskPopup = memo(({ taskType, onComplete }: TaskPopupProps) => {
   const [timeLeft, setTimeLeft] = useState(10); // 10 seconds to complete the popup task
   const [isOpen, setIsOpen] = useState(true);
   
@@ -67,7 +66,6 @@ const TaskPopup = ({ taskType, onComplete }: TaskPopupProps) => {
                   onClick={() => {
                     if (packageDeliveryStep === 'package') {
                       setPackageDeliveryStep('customer');
-                      // If they clicked in the right order, complete the task
                       handleComplete(true);
                     }
                   }}
@@ -230,12 +228,18 @@ const TaskPopup = ({ taskType, onComplete }: TaskPopupProps) => {
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="bg-gray-900 border-0 text-white max-w-md w-11/12 scanlines crt-effect pixel-border fixed bottom-0 left-1/2 transform -translate-x-1/2 mb-4 z-50">
-        {renderTaskContent()}
-      </DialogContent>
-    </Dialog>
+    <div className="fixed inset-0 z-[100] pointer-events-none flex items-end justify-center">
+      <div className="pointer-events-auto w-11/12 max-w-md mb-4">
+        {isOpen && (
+          <div className="bg-gray-900 border-4 border-gray-700 text-white rounded-lg p-4 scanlines crt-effect pixel-border shadow-2xl">
+            {renderTaskContent()}
+          </div>
+        )}
+      </div>
+    </div>
   );
-};
+});
+
+TaskPopup.displayName = 'TaskPopup';
 
 export default TaskPopup;

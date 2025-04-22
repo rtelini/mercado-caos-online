@@ -36,7 +36,7 @@ const GameArea: React.FC<GameAreaProps> = ({
   queueTaskToExec,
   queuePopupOpen,
   getQueueTaskTimeLeft
-}) => <div ref={gameAreaRef} className="relative bg-[url('https://via.placeholder.com/1000x800?text=Office+Background')] bg-cover bg-center overflow-hidden w-full h-full min-h-[1000px]">
+}) => <div ref={gameAreaRef} className="relative bg-[url('https://via.placeholder.com/1000x800?text=Office+Background')] bg-cover bg-center overflow-hidden w-full h-full min-h-[100px]">
     {activeTasks.map(task => <Task key={task.id} id={task.id} type={task.type} position={task.position} timeLimit={task.timeLimit} onClick={handleTaskClick} onTimeout={handleTaskTimeout} isUrgent={task.isUrgent} clicksRequired={task.clicksRequired} />)}
     <TaskQueuePanel taskQueue={taskQueue} onTaskStart={onTaskStart} queueTaskToExecId={queueTaskToExec ? queueTaskToExec.id : null} queuePopupOpen={queuePopupOpen} getQueueTaskTimeLeft={getQueueTaskTimeLeft} />
   </div>;

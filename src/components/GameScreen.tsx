@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import Task, { TaskType } from './Task';
@@ -131,7 +130,6 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
     setActiveTasks([]);
     setChaosMode(false);
 
-    // Demissão se score do dia < 0
     if (score < 0) {
       setTimeout(() => {
         setGameOver(true);
@@ -211,18 +209,19 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
     setActiveTasks(prevActive => {
       const found = prevActive.find(t => t.id === taskId);
       if (!found) return prevActive;
-      setTaskQueue(prevQueue => {
-        addTaskToQueue(prevQueue, {
-          id: found.id,
-          type: found.type,
-          timeLimit: QUEUE_TASK_TIME,
-          addedToQueueAt: Date.now(),
-        }, setTaskQueue);
-        return prevQueue; // retorna prevQueue pois setTaskQueue já é chamado dentro do hook!
-      });
-      return prevActive.filter(t => t.id !== taskId); // remove do board
+      
+      const newQueueTask = {
+        id: found.id,
+        type: found.type,
+        timeLimit: QUEUE_TASK_TIME,
+        addedToQueueAt: Date.now(),
+      };
+      
+      addTaskToQueue(taskQueue, newQueueTask, setTaskQueue);
+      
+      return prevActive.filter(t => t.id !== taskId);
     });
-  }, [addTaskToQueue]);
+  }, [addTaskToQueue, taskQueue]);
 
   // Task do board desaparece se expirar, não pontua
   const handleTaskTimeout = useCallback((taskId: string) => {

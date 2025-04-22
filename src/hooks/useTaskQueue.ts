@@ -18,15 +18,20 @@ export function useTaskQueue({ onTimeout, timePerQueueTask }: UseTaskQueueOption
   const timers = useRef<{ [id: string]: NodeJS.Timeout }>({});
 
   const addTaskToQueue = useCallback(
-    (queue: TaskInQueue[], task: TaskInQueue, setQueue: (q: TaskInQueue[]) => void) => {
+    (queue: TaskInQueue[], task: TaskInQueue, setQueue: React.Dispatch<React.SetStateAction<TaskInQueue[]>>) => {
       // Não pode duplicar
       if (queue.find((t) => t.id === task.id)) return queue;
 
       const timeout = setTimeout(() => {
         onTimeout(task.id, task.type);
       }, timePerQueueTask * 1000);
+      
       timers.current[task.id] = timeout;
-      setQueue([...queue, { ...task, timeLimit: timePerQueueTask, addedToQueueAt: Date.now() }]);
+      
+      // Atualiza a fila usando o setState diretamente
+      setQueue(prevQueue => [...prevQueue, { ...task, timeLimit: timePerQueueTask, addedToQueueAt: Date.now() }]);
+      
+      // Retorna a nova fila para compatibilidade com o código existente
       return [...queue, task];
     },
     [onTimeout, timePerQueueTask]

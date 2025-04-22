@@ -281,7 +281,7 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
     return `${mins}:${secs}`;
   };
 
-  // Visuais do novo painel cinza estilo pop-up "pixel"
+  // Renderização da tela do jogo
   return (
     <div className="relative flex flex-col w-full h-screen max-h-[80vh]">
       {/* HUD */}
@@ -342,43 +342,15 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
           queuePopupOpen={queuePopupOpen}
           getQueueTaskTimeLeft={getQueueTaskTimeLeft}
         />
-
-        {/* Pop-up para execução da tarefa da fila */}
-        {queueTaskToExec && queuePopupOpen && (
-          <TaskPopup
-            taskType={queueTaskToExec.type}
-            onComplete={handleQueuePopupComplete}
-          />
-        )}
-
-        {/* Overlay de fim de dia */}
-        {showDayComplete && (
-          <div className="absolute inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center">
-            <div className="bg-gray-700 border-[6px] border-gray-600 rounded-lg p-8 max-w-md text-center pixel-border animate-fade-in">
-              <h2 className="text-3xl font-pixel mb-4 text-gray-100">Dia {currentDay} Completo!</h2>
-              <div className="my-6">
-                <p className="text-2xl font-pixel text-gray-100">Pontos do dia: {dayScore}</p>
-                <p className="text-2xl font-pixel text-gray-100">Pontos totais: {score}</p>
-              </div>
-              {score < 0 ? (
-                <Button
-                  disabled
-                  className="bg-gray-600 text-white font-pixel border-[3px] border-gray-900 mt-4 w-full py-3 text-lg cursor-not-allowed opacity-60 pixel-border"
-                >
-                  VOCÊ FOI DEMITIDO
-                </Button>
-              ) : (
-                <Button
-                  onClick={startNextDay}
-                  className="bg-gray-200 hover:bg-white text-gray-700 font-pixel border-[3px] border-gray-700 mt-4 w-full py-3 text-lg pixel-border"
-                >
-                  {currentDay >= MAX_DAYS ? "Ver Resultado Final" : "Próximo Dia"}
-                </Button>
-              )}
-            </div>
-          </div>
-        )}
       </div>
+      
+      {/* Pop-up para execução da tarefa da fila - Agora renderizado fora da área de jogo */}
+      {queueTaskToExec && queuePopupOpen && (
+        <TaskPopup
+          taskType={queueTaskToExec.type}
+          onComplete={handleQueuePopupComplete}
+        />
+      )}
     </div>
   );
 };

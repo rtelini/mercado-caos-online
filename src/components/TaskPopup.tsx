@@ -231,7 +231,7 @@ const TaskPopup = ({ taskType, onComplete }: TaskPopupProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="bg-gray-900 border-0 text-white max-w-md w-11/12 scanlines crt-effect pixel-border">
+      <DialogContent className="bg-gray-900 border-0 text-white max-w-md w-11/12 scanlines crt-effect pixel-border fixed bottom-0 left-1/2 transform -translate-x-1/2 mb-4 z-50">
         {renderTaskContent()}
       </DialogContent>
     </Dialog>

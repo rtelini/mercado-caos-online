@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import Task, { TaskType } from './Task';
-import { PauseIcon } from 'lucide-react';
-import TaskPopup from './TaskPopup';
+import GameHUD from './GameHUD';
+import StressBar from './StressBar';
+import GameArea from './GameArea';
 import { useTaskQueue, TaskInQueue } from "@/hooks/useTaskQueue";
-import TaskQueuePanel from "./TaskQueuePanel";
 
 interface GameScreenProps {
   onGameOver: (score: number) => void;
@@ -274,65 +272,28 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
 
   return (
     <div className="relative flex flex-col w-full h-screen max-h-[80vh]">
-      <div className="bg-gray-800 p-4 border-b border-gray-700 flex justify-between items-center">
-        <div className="flex items-center gap-4">
-          <div>
-            <span className="text-sm font-medium mr-1 text-gray-200">Dia:</span>
-            <span className="text-lg font-bold text-gray-100">{currentDay}/{MAX_DAYS}</span>
-          </div>
-          <div>
-            <span className="text-sm font-medium mr-1 text-gray-200">Tempo:</span>
-            <span className="text-lg font-bold text-gray-100">{formatTime(gameTime)}</span>
-            {chaosMode && (
-              <span className="ml-2 text-xs bg-red-500 text-white px-2 py-1 rounded animate-pulse">MODO CAOS</span>
-            )}
-          </div>
-          <div>
-            <span className="text-sm font-medium mr-1 text-gray-200">Pontos:</span>
-            <span className="text-lg font-bold text-gray-100">{score}</span>
-          </div>
-        </div>
-        <Button variant="ghost" size="sm" onClick={onPause} className="text-gray-300 hover:text-gray-100">
-          <PauseIcon size={20} />
-        </Button>
-      </div>
-      <div className="w-full h-3 bg-gray-700">
-        <div 
-          className="h-full bg-gradient-to-r from-gray-400 to-red-500 transition-all duration-300" 
-          style={{ width: `${stressLevel}%` }}
-        ></div>
-      </div>
-      <div 
-        ref={gameAreaRef} 
-        className="flex-1 relative bg-[url('https://via.placeholder.com/1000x800?text=Office+Background')] bg-cover bg-center overflow-hidden"
-      >
-        {activeTasks.map((task) => (
-          <Task
-            key={task.id}
-            id={task.id}
-            type={task.type}
-            position={task.position}
-            timeLimit={task.timeLimit}
-            onClick={handleTaskClick}
-            onTimeout={handleTaskTimeout}
-            isUrgent={task.isUrgent}
-            clicksRequired={task.clicksRequired}
-          />
-        ))}
-        <TaskQueuePanel
-          taskQueue={taskQueue}
-          onTaskStart={handleQueueTaskStart}
-          queueTaskToExecId={queueTaskToExec ? queueTaskToExec.id : null}
-          queuePopupOpen={queuePopupOpen}
-          getQueueTaskTimeLeft={getQueueTaskTimeLeft}
-        />
-      </div>
-      {queueTaskToExec && queuePopupOpen && (
-        <TaskPopup
-          taskType={queueTaskToExec.type}
-          onComplete={handleQueuePopupComplete}
-        />
-      )}
+      <GameHUD
+        currentDay={currentDay}
+        maxDays={MAX_DAYS}
+        gameTime={gameTime}
+        chaosMode={chaosMode}
+        score={score}
+        onPause={onPause}
+        formatTime={formatTime}
+      />
+      <StressBar stressLevel={stressLevel} />
+      <GameArea
+        gameAreaRef={gameAreaRef}
+        activeTasks={activeTasks}
+        handleTaskClick={handleTaskClick}
+        handleTaskTimeout={handleTaskTimeout}
+        taskQueue={taskQueue}
+        onTaskStart={handleQueueTaskStart}
+        queueTaskToExec={queueTaskToExec}
+        queuePopupOpen={queuePopupOpen}
+        getQueueTaskTimeLeft={getQueueTaskTimeLeft}
+        handleQueuePopupComplete={handleQueuePopupComplete}
+      />
     </div>
   );
 };

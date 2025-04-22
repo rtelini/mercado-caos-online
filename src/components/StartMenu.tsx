@@ -11,7 +11,7 @@ const StartMenu = ({
   return <div className="flex flex-col items-center justify-center min-h-[600px] p-6 bg-gradient-to-b from-game-primary/10 to-white">
       <h1 className="text-4xl md:text-5xl font-bold mb-4 text-center text-game-dark leading-tight">
         Caos no Escritório
-        <span className="block text-game-accent">MercadoLivre Edition</span>
+        <span className="block text-[game-neon-yellow] text-game-primary">MercadoLivre Edition</span>
       </h1>
       
       <div className="my-8">
@@ -19,10 +19,10 @@ const StartMenu = ({
       </div>
       
       <div className="flex flex-col gap-4 w-64">
-        <Button onClick={onStartGame} className="bg-game-primary hover:bg-game-primary/80 text-white py-6 text-lg">
+        <Button onClick={onStartGame} className="py-6 text-lg bg-[#ffeb00] text-zinc-950">
           Iniciar Caos
         </Button>
-        <Button onClick={onHowToPlay} variant="outline" className="border-game-primary text-game-primary hover:bg-game-primary/10">
+        <Button onClick={onHowToPlay} variant="outline" className="border-game-primary bg-[#ffee00] text-zinc-950">
           Como Jogar
         </Button>
       </div>

@@ -52,10 +52,16 @@ const Task = ({
   }, [id, onTimeout, timeLimit]);
   
   const handleClick = () => {
-    if (clicks + 1 >= clicksRequired) {
-      onClick(id, type);
+    if (type === 'system_down') {
+      // For system_down which requires multiple clicks
+      if (clicks + 1 >= clicksRequired) {
+        onClick(id, type);
+      } else {
+        setClicks(clicks + 1);
+      }
     } else {
-      setClicks(clicks + 1);
+      // For all other tasks, just trigger onClick immediately
+      onClick(id, type);
     }
   };
   
@@ -154,7 +160,7 @@ const Task = ({
           {getTaskLabel()}
         </span>
         
-        {clicksRequired > 1 && (
+        {type === 'system_down' && (
           <span className="text-xs font-pixel mt-0.5 mb-1">
             {clicks}/{clicksRequired} cliques
           </span>

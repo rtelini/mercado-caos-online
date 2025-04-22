@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import Task, { TaskType } from './Task';
 import { PauseIcon } from 'lucide-react';
+import TaskPopup from './TaskPopup';
 
 interface GameScreenProps {
   onGameOver: (score: number) => void;
@@ -32,6 +33,7 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
   const [activeTasks, setActiveTasks] = useState<ActiveTask[]>([]);
   const [taskCounter, setTaskCounter] = useState(0);
   const [chaosMode, setChaosMode] = useState(false);
+  const [currentPopupTask, setCurrentPopupTask] = useState<{ id: string; type: TaskType } | null>(null);
   const gameAreaRef = useRef<HTMLDivElement>(null);
   const gameTimerRef = useRef<NodeJS.Timeout | null>(null);
   const taskGeneratorRef = useRef<NodeJS.Timeout | null>(null);
@@ -65,6 +67,7 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
     setGameTime(0);
     setActiveTasks([]);
     setChaosMode(false);
+    setCurrentPopupTask(null);
     
     // Start game timer
     gameTimerRef.current = setInterval(() => {
@@ -90,7 +93,7 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
       const baseRate = chaosMode ? 800 : 1600;
       const adjustedRate = Math.max(baseRate - (gameTime * 10), chaosMode ? 400 : 800);
       
-      // Generate a new task
+      // Generate a new task if no popup is currently active
       if (Math.random() * adjustedRate < 100) {
         createNewTask();
       }
@@ -135,6 +138,33 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
     setActiveTasks(prev => [...prev, newTask]);
     setTaskCounter(prev => prev + 1);
   };
+
+  const handleTaskClick = useCallback((taskId: string, taskType: TaskType) => {
+    // For tasks that require popup interaction
+    const popupTasks: TaskType[] = [
+      'package_missing', 
+      'coupon_issue', 
+      'duplicate_order', 
+      'urgent_message'
+    ];
+    
+    if (popupTasks.includes(taskType)) {
+      setCurrentPopupTask({ id: taskId, type: taskType });
+    } else {
+      // For simple tasks that complete with a single click
+      handleTaskComplete(taskId, taskType);
+    }
+  }, []);
+
+  const handlePopupComplete = useCallback((success: boolean) => {
+    if (currentPopupTask && success) {
+      handleTaskComplete(currentPopupTask.id, currentPopupTask.type);
+    } else if (currentPopupTask) {
+      handleTaskTimeout(currentPopupTask.id);
+    }
+    
+    setCurrentPopupTask(null);
+  }, [currentPopupTask]);
 
   const handleTaskComplete = useCallback((taskId: string, taskType: TaskType) => {
     // Update score
@@ -242,12 +272,20 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
             type={task.type}
             position={task.position}
             timeLimit={task.timeLimit}
-            onClick={handleTaskComplete}
+            onClick={handleTaskClick}
             onTimeout={handleTaskTimeout}
             isUrgent={task.isUrgent}
             clicksRequired={task.clicksRequired}
           />
         ))}
+
+        {/* Task popup */}
+        {currentPopupTask && (
+          <TaskPopup
+            taskType={currentPopupTask.type}
+            onComplete={handlePopupComplete}
+          />
+        )}
       </div>
     </div>
   );

@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import GameHUD from './GameHUD';
 import StressBar from './StressBar';
 import GameArea from './GameArea';
-import { TaskType } from './Task';  // Added this import for TaskType
-import TaskPopup from './TaskPopup'; // Added this import for TaskPopup
+import { TaskType } from './Task';
+import TaskPopup from './TaskPopup';
 import { useTaskQueue, TaskInQueue } from "@/hooks/useTaskQueue";
 
 interface GameScreenProps {
@@ -285,29 +284,32 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
         formatTime={formatTime}
       />
       <StressBar stressLevel={stressLevel} />
-      <GameArea
-        gameAreaRef={gameAreaRef}
-        activeTasks={activeTasks}
-        handleTaskClick={handleTaskClick}
-        handleTaskTimeout={handleTaskTimeout}
-        taskQueue={taskQueue}
-        onTaskStart={handleQueueTaskStart}
-        queueTaskToExec={queueTaskToExec}
-        queuePopupOpen={queuePopupOpen}
-        getQueueTaskTimeLeft={getQueueTaskTimeLeft}
-        handleQueuePopupComplete={handleQueuePopupComplete}
-      />
-      {/* Novo painel para o pop-up, fora do tabuleiro */}
-      {queueTaskToExec && queuePopupOpen && (
-        <div className="w-full flex justify-center mt-6">
-          <div className="max-w-xl w-full">
-            <TaskPopup
-              taskType={queueTaskToExec.type}
-              onComplete={handleQueuePopupComplete}
-            />
-          </div>
+      <div className="flex flex-col gap-4 h-full">
+        <div className="flex-1">
+          <GameArea
+            gameAreaRef={gameAreaRef}
+            activeTasks={activeTasks}
+            handleTaskClick={handleTaskClick}
+            handleTaskTimeout={handleTaskTimeout}
+            taskQueue={taskQueue}
+            onTaskStart={handleQueueTaskStart}
+            queueTaskToExec={queueTaskToExec}
+            queuePopupOpen={queuePopupOpen}
+            getQueueTaskTimeLeft={getQueueTaskTimeLeft}
+          />
         </div>
-      )}
+        
+        {queueTaskToExec && queuePopupOpen && (
+          <div className="flex justify-center items-center w-full mt-2 mb-2 z-50">
+            <div className="w-full max-w-2xl">
+              <TaskPopup
+                taskType={queueTaskToExec.type}
+                onComplete={handleQueuePopupComplete}
+              />
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

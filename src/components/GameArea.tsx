@@ -1,7 +1,7 @@
+
 import React from "react";
 import Task, { TaskType } from "./Task";
 import TaskQueuePanel from "./TaskQueuePanel";
-import TaskPopup from "./TaskPopup";
 import { TaskInQueue } from "@/hooks/useTaskQueue";
 
 interface ActiveTask {
@@ -37,36 +37,31 @@ const GameArea: React.FC<GameAreaProps> = ({
   queueTaskToExec,
   queuePopupOpen,
   getQueueTaskTimeLeft,
-  handleQueuePopupComplete,
 }) => (
-  <div className="flex flex-col gap-4">
-    <div
-      ref={gameAreaRef}
-      className="relative bg-[url('https://via.placeholder.com/1000x800?text=Office+Background')] bg-cover bg-center overflow-hidden"
-      style={{ height: '60vh' }}
-    >
-      {activeTasks.map((task) => (
-        <Task
-          key={task.id}
-          id={task.id}
-          type={task.type}
-          position={task.position}
-          timeLimit={task.timeLimit}
-          onClick={handleTaskClick}
-          onTimeout={handleTaskTimeout}
-          isUrgent={task.isUrgent}
-          clicksRequired={task.clicksRequired}
-        />
-      ))}
-      <TaskQueuePanel
-        taskQueue={taskQueue}
-        onTaskStart={onTaskStart}
-        queueTaskToExecId={queueTaskToExec ? queueTaskToExec.id : null}
-        queuePopupOpen={queuePopupOpen}
-        getQueueTaskTimeLeft={getQueueTaskTimeLeft}
+  <div
+    ref={gameAreaRef}
+    className="relative bg-[url('https://via.placeholder.com/1000x800?text=Office+Background')] bg-cover bg-center overflow-hidden w-full h-[50vh]"
+  >
+    {activeTasks.map((task) => (
+      <Task
+        key={task.id}
+        id={task.id}
+        type={task.type}
+        position={task.position}
+        timeLimit={task.timeLimit}
+        onClick={handleTaskClick}
+        onTimeout={handleTaskTimeout}
+        isUrgent={task.isUrgent}
+        clicksRequired={task.clicksRequired}
       />
-    </div>
-    {/* Removido o pop-up daqui, agora será exibido fora do tabuleiro */}
+    ))}
+    <TaskQueuePanel
+      taskQueue={taskQueue}
+      onTaskStart={onTaskStart}
+      queueTaskToExecId={queueTaskToExec ? queueTaskToExec.id : null}
+      queuePopupOpen={queuePopupOpen}
+      getQueueTaskTimeLeft={getQueueTaskTimeLeft}
+    />
   </div>
 );
 

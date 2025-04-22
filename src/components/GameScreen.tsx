@@ -24,7 +24,8 @@ const STRESS_MAX = 100;
 const STRESS_INCREASE_ON_FAIL = 15;
 const STRESS_INCREASE_ON_REPUTATION_FAIL = 25;
 const STRESS_DECREASE_ON_SUCCESS = 2;
-const GAME_DURATION = 60; // 60 seconds for normal mode, then chaos mode
+const GAME_DURATION_PER_DAY = 60; // 60 seconds per day
+const MAX_DAYS = 5; // Total number of workdays
 
 const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
   const [score, setScore] = useState(0);
@@ -34,6 +35,10 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
   const [taskCounter, setTaskCounter] = useState(0);
   const [chaosMode, setChaosMode] = useState(false);
   const [currentPopupTask, setCurrentPopupTask] = useState<{ id: string; type: TaskType } | null>(null);
+  const [currentDay, setCurrentDay] = useState(1);
+  const [showDayComplete, setShowDayComplete] = useState(false);
+  const [dayScore, setDayScore] = useState(0);
+  
   const gameAreaRef = useRef<HTMLDivElement>(null);
   const gameTimerRef = useRef<NodeJS.Timeout | null>(null);
   const taskGeneratorRef = useRef<NodeJS.Timeout | null>(null);
@@ -68,15 +73,23 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
     setActiveTasks([]);
     setChaosMode(false);
     setCurrentPopupTask(null);
+    setCurrentDay(1);
+    setDayScore(0);
     
     // Start game timer
     gameTimerRef.current = setInterval(() => {
       setGameTime(prev => {
         const newTime = prev + 1;
         
-        // Enter chaos mode after GAME_DURATION
-        if (newTime === GAME_DURATION) {
+        // Enter chaos mode after 70% of the day duration
+        if (newTime === Math.floor(GAME_DURATION_PER_DAY * 0.7)) {
           setChaosMode(true);
+        }
+        
+        // Complete day when time reaches day duration
+        if (newTime >= GAME_DURATION_PER_DAY) {
+          completeDay();
+          return 0; // Reset time for next day
         }
         
         return newTime;
@@ -84,6 +97,61 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
     }, 1000);
     
     // Start task generator
+    generateTasks();
+  };
+
+  const completeDay = () => {
+    // Pause game timers
+    if (gameTimerRef.current) clearInterval(gameTimerRef.current);
+    if (taskGeneratorRef.current) clearInterval(taskGeneratorRef.current);
+    
+    // Save daily score
+    setDayScore(score);
+    
+    // Show day complete dialog
+    setShowDayComplete(true);
+    
+    // Clear active tasks
+    setActiveTasks([]);
+    setChaosMode(false);
+  };
+
+  const startNextDay = () => {
+    // Check if we've reached the maximum number of days
+    if (currentDay >= MAX_DAYS) {
+      // Game completed successfully
+      onGameOver(score);
+      return;
+    }
+    
+    // Start next day
+    setCurrentDay(prev => prev + 1);
+    setGameTime(0);
+    
+    // Hide day complete dialog
+    setShowDayComplete(false);
+    
+    // Restart game timers
+    gameTimerRef.current = setInterval(() => {
+      setGameTime(prev => {
+        const newTime = prev + 1;
+        
+        // Enter chaos mode after 70% of the day duration
+        if (newTime === Math.floor(GAME_DURATION_PER_DAY * 0.7)) {
+          setChaosMode(true);
+        }
+        
+        // Complete day when time reaches day duration
+        if (newTime >= GAME_DURATION_PER_DAY) {
+          completeDay();
+          return 0; // Reset time for next day
+        }
+        
+        return newTime;
+      });
+    }, 1000);
+    
+    // Restart task generator
     generateTasks();
   };
 
@@ -101,7 +169,7 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
   };
 
   const createNewTask = () => {
-    if (!gameAreaRef.current) return;
+    if (!gameAreaRef.current || currentPopupTask) return;
     
     const areaWidth = gameAreaRef.current.clientWidth;
     const areaHeight = gameAreaRef.current.clientHeight;
@@ -150,7 +218,7 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
     
     if (popupTasks.includes(taskType)) {
       setCurrentPopupTask({ id: taskId, type: taskType });
-      // Don't remove the task from activeTasks until the popup is completed
+      // Don't remove the task yet - wait for popup completion
     } else {
       // For simple tasks that complete with a single click
       handleTaskComplete(taskId, taskType);
@@ -158,13 +226,15 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
   }, []);
 
   const handlePopupComplete = useCallback((success: boolean) => {
-    if (currentPopupTask && success) {
-      handleTaskComplete(currentPopupTask.id, currentPopupTask.type);
-    } else if (currentPopupTask) {
-      handleTaskTimeout(currentPopupTask.id);
+    if (currentPopupTask) {
+      if (success) {
+        handleTaskComplete(currentPopupTask.id, currentPopupTask.type);
+      } else {
+        handleTaskTimeout(currentPopupTask.id);
+      }
+      
+      setCurrentPopupTask(null);
     }
-    
-    setCurrentPopupTask(null);
   }, [currentPopupTask]);
 
   const handleTaskComplete = useCallback((taskId: string, taskType: TaskType) => {
@@ -228,6 +298,11 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
       <div className="bg-gray-800 p-4 border-b border-gray-700 flex justify-between items-center">
         <div className="flex items-center gap-4">
           <div>
+            <span className="text-sm font-medium mr-1 text-gray-200">Dia:</span>
+            <span className="text-lg font-bold text-gray-100">{currentDay}/{MAX_DAYS}</span>
+          </div>
+          
+          <div>
             <span className="text-sm font-medium mr-1 text-gray-200">Tempo:</span>
             <span className="text-lg font-bold text-gray-100">{formatTime(gameTime)}</span>
             {chaosMode && (
@@ -286,6 +361,25 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
             taskType={currentPopupTask.type}
             onComplete={handlePopupComplete}
           />
+        )}
+        
+        {/* Day complete overlay */}
+        {showDayComplete && (
+          <div className="absolute inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center">
+            <div className="bg-gray-700 border-[6px] border-gray-600 rounded-lg p-8 max-w-md text-center pixel-border animate-fade-in">
+              <h2 className="text-3xl font-pixel mb-4 text-gray-100">Dia {currentDay} Completo!</h2>
+              <div className="my-6">
+                <p className="text-2xl font-pixel text-gray-100">Pontos do dia: {dayScore}</p>
+                <p className="text-2xl font-pixel text-gray-100">Pontos totais: {score}</p>
+              </div>
+              <Button
+                onClick={startNextDay}
+                className="bg-gray-200 hover:bg-white text-gray-700 font-pixel border-[3px] border-gray-700 mt-4 w-full py-3 text-lg pixel-border"
+              >
+                {currentDay >= MAX_DAYS ? "Ver Resultado Final" : "Próximo Dia"}
+              </Button>
+            </div>
+          </div>
         )}
       </div>
     </div>

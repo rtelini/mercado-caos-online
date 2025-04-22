@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Package2, Truck, X, MessageSquare, Tag, Monitor, ChartBar, PackageCheck } from 'lucide-react';
 
@@ -112,27 +111,8 @@ const Task = ({
   };
   
   const getTaskColor = () => {
-    // Changed all colors to gray variants
-    switch(type) {
-      case 'package_missing':
-        return 'text-gray-700 bg-opacity-80 bg-gray-200 border-[3px] border-gray-700';
-      case 'wrong_shipping':
-        return 'text-gray-700 bg-opacity-80 bg-gray-200 border-[3px] border-gray-700';
-      case 'canceled_sale':
-        return 'text-gray-700 bg-opacity-80 bg-gray-200 border-[3px] border-gray-700';
-      case 'urgent_message':
-        return 'text-gray-700 bg-opacity-80 bg-gray-200 border-[3px] border-gray-700';
-      case 'coupon_issue':
-        return 'text-gray-700 bg-opacity-80 bg-gray-200 border-[3px] border-gray-700';
-      case 'system_down':
-        return 'text-gray-700 bg-opacity-80 bg-gray-200 border-[3px] border-gray-700';
-      case 'reputation_drop':
-        return 'text-gray-700 bg-opacity-80 bg-gray-200 border-[3px] border-gray-700';
-      case 'duplicate_order':
-        return 'text-gray-700 bg-opacity-80 bg-gray-200 border-[3px] border-gray-700';
-      default:
-        return 'text-gray-700 bg-opacity-80 bg-gray-200 border-[3px] border-gray-700';
-    }
+    // All tasks have the same gray style now
+    return 'text-gray-700 bg-opacity-80 bg-gray-200 border-[3px] border-gray-700';
   };
   
   const progressPercentage = (timeLeft / timeLimit) * 100;

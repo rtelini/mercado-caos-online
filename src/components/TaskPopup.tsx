@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect, memo } from 'react';
 import { TaskType } from './Task';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Package2, Tag, MessageSquare, PackageCheck, Send } from 'lucide-react';
 
@@ -46,11 +45,9 @@ const TaskPopup = memo(({ taskType, onComplete }: TaskPopupProps) => {
       case 'package_missing':
         return (
           <div className="p-4">
-            <DialogHeader>
-              <DialogTitle className="text-center font-pixel text-xl mb-4 text-gray-200 arcade-text-shadow">
-                Entregue o Pacote!
-              </DialogTitle>
-            </DialogHeader>
+            <h2 className="text-center font-pixel text-xl mb-4 text-gray-200 arcade-text-shadow">
+              Entregue o Pacote!
+            </h2>
             
             <div className="flex flex-col items-center mb-6">
               <div className="flex justify-between items-center w-full mb-4">
@@ -99,11 +96,9 @@ const TaskPopup = memo(({ taskType, onComplete }: TaskPopupProps) => {
       case 'coupon_issue':
         return (
           <div className="p-4">
-            <DialogHeader>
-              <DialogTitle className="text-center font-pixel text-xl mb-4 text-gray-200 arcade-text-shadow">
-                Crie um Cupom Novo!
-              </DialogTitle>
-            </DialogHeader>
+            <h2 className="text-center font-pixel text-xl mb-4 text-gray-200 arcade-text-shadow">
+              Crie um Cupom Novo!
+            </h2>
             
             <div className="flex flex-col items-center mb-6">
               <div className="flex items-center justify-center mb-4">
@@ -141,11 +136,9 @@ const TaskPopup = memo(({ taskType, onComplete }: TaskPopupProps) => {
       case 'duplicate_order':
         return (
           <div className="p-4">
-            <DialogHeader>
-              <DialogTitle className="text-center font-pixel text-xl mb-4 text-gray-200 arcade-text-shadow">
-                Cancele o Pedido Duplicado!
-              </DialogTitle>
-            </DialogHeader>
+            <h2 className="text-center font-pixel text-xl mb-4 text-gray-200 arcade-text-shadow">
+              Cancele o Pedido Duplicado!
+            </h2>
             
             <div className="flex flex-col items-center mb-6">
               <div className="flex justify-center gap-6 mb-4">
@@ -187,11 +180,9 @@ const TaskPopup = memo(({ taskType, onComplete }: TaskPopupProps) => {
       case 'urgent_message':
         return (
           <div className="p-4">
-            <DialogHeader>
-              <DialogTitle className="text-center font-pixel text-xl mb-4 text-gray-200 arcade-text-shadow">
-                Responda Rápido!
-              </DialogTitle>
-            </DialogHeader>
+            <h2 className="text-center font-pixel text-xl mb-4 text-gray-200 arcade-text-shadow">
+              Responda Rápido!
+            </h2>
             
             <div className="bg-gray-800 p-3 rounded-lg mb-4 pixel-border">
               <div className="flex items-start mb-3">
@@ -236,12 +227,12 @@ const TaskPopup = memo(({ taskType, onComplete }: TaskPopupProps) => {
     }
   };
 
+  if (!isOpen) return null;
+
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && handleComplete(false)}>
-      <DialogContent className="bg-gray-900 border-4 border-gray-700 text-white rounded-lg p-0 scanlines crt-effect pixel-border shadow-2xl max-w-md">
-        {renderTaskContent()}
-      </DialogContent>
-    </Dialog>
+    <div className="w-full bg-gray-900 border-4 border-gray-700 rounded-lg scanlines crt-effect pixel-border shadow-2xl">
+      {renderTaskContent()}
+    </div>
   );
 });
 

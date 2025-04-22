@@ -40,35 +40,41 @@ const GameArea: React.FC<GameAreaProps> = ({
   getQueueTaskTimeLeft,
   handleQueuePopupComplete,
 }) => (
-  <div
-    ref={gameAreaRef}
-    className="flex-1 relative bg-[url('https://via.placeholder.com/1000x800?text=Office+Background')] bg-cover bg-center overflow-hidden"
-  >
-    {activeTasks.map((task) => (
-      <Task
-        key={task.id}
-        id={task.id}
-        type={task.type}
-        position={task.position}
-        timeLimit={task.timeLimit}
-        onClick={handleTaskClick}
-        onTimeout={handleTaskTimeout}
-        isUrgent={task.isUrgent}
-        clicksRequired={task.clicksRequired}
+  <div className="flex flex-col gap-4">
+    <div
+      ref={gameAreaRef}
+      className="relative bg-[url('https://via.placeholder.com/1000x800?text=Office+Background')] bg-cover bg-center overflow-hidden"
+      style={{ height: '60vh' }}
+    >
+      {activeTasks.map((task) => (
+        <Task
+          key={task.id}
+          id={task.id}
+          type={task.type}
+          position={task.position}
+          timeLimit={task.timeLimit}
+          onClick={handleTaskClick}
+          onTimeout={handleTaskTimeout}
+          isUrgent={task.isUrgent}
+          clicksRequired={task.clicksRequired}
+        />
+      ))}
+      <TaskQueuePanel
+        taskQueue={taskQueue}
+        onTaskStart={onTaskStart}
+        queueTaskToExecId={queueTaskToExec ? queueTaskToExec.id : null}
+        queuePopupOpen={queuePopupOpen}
+        getQueueTaskTimeLeft={getQueueTaskTimeLeft}
       />
-    ))}
-    <TaskQueuePanel
-      taskQueue={taskQueue}
-      onTaskStart={onTaskStart}
-      queueTaskToExecId={queueTaskToExec ? queueTaskToExec.id : null}
-      queuePopupOpen={queuePopupOpen}
-      getQueueTaskTimeLeft={getQueueTaskTimeLeft}
-    />
+    </div>
+    
     {queueTaskToExec && queuePopupOpen && (
-      <TaskPopup
-        taskType={queueTaskToExec.type}
-        onComplete={handleQueuePopupComplete}
-      />
+      <div className="task-popup-container">
+        <TaskPopup
+          taskType={queueTaskToExec.type}
+          onComplete={handleQueuePopupComplete}
+        />
+      </div>
     )}
   </div>
 );

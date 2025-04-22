@@ -25,7 +25,7 @@ const STRESS_MAX = 100;
 const STRESS_INCREASE_ON_FAIL = 15;
 const STRESS_INCREASE_ON_REPUTATION_FAIL = 25;
 const STRESS_DECREASE_ON_SUCCESS = 2;
-const GAME_DURATION_PER_DAY = 60; // 60 segundos por dia
+const GAME_DURATION_PER_DAY = 90; // 90 segundos por dia
 const MAX_DAYS = 90; // 90 dias de experiência
 const QUEUE_TASK_TIME = 12; // tempo máximo (segundos) para realizar cada tarefa na fila
 
@@ -273,7 +273,7 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
   };
 
   return (
-    <div className="relative flex flex-col w-full h-screen max-h-[80vh]">
+    <div className="relative flex flex-col w-full h-screen">
       <GameHUD
         currentDay={currentDay}
         maxDays={MAX_DAYS}
@@ -296,12 +296,13 @@ const GameScreen = ({ onGameOver, onPause }: GameScreenProps) => {
             queueTaskToExec={queueTaskToExec}
             queuePopupOpen={queuePopupOpen}
             getQueueTaskTimeLeft={getQueueTaskTimeLeft}
+            handleQueuePopupComplete={handleQueuePopupComplete}
           />
         </div>
         
         {queueTaskToExec && queuePopupOpen && (
-          <div className="flex justify-center items-center w-full mt-2 mb-2 z-50">
-            <div className="w-full max-w-2xl">
+          <div className="flex justify-center items-center w-full mt-2 mb-2 z-50 min-h-[350px]">
+            <div className="w-full max-w-2xl mx-auto">
               <TaskPopup
                 taskType={queueTaskToExec.type}
                 onComplete={handleQueuePopupComplete}

@@ -40,8 +40,7 @@ const GameArea: React.FC<GameAreaProps> = ({
 }) => (
   <div
     ref={gameAreaRef}
-    className="relative bg-[url('https://via.placeholder.com/1000x800?text=Office+Background')] bg-cover bg-center overflow-hidden w-full h-full min-h-[500px]"
-    // altura 100%, mínimo de 500px pra garantir área segura
+    className="relative bg-[url('https://via.placeholder.com/1000x800?text=Office+Background')] bg-cover bg-center overflow-hidden w-full h-[50vh]"
   >
     {activeTasks.map((task) => (
       <Task

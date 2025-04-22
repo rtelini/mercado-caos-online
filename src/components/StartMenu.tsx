@@ -11,7 +11,7 @@ const StartMenu = ({
   return <div className="flex flex-col items-center justify-center min-h-[600px] p-6 bg-gradient-to-b from-game-primary/10 to-white">
       <h1 className="text-4xl md:text-5xl font-bold mb-4 text-center text-game-dark leading-tight">
         Caos no Escritório
-        <span className="block text-[game-neon-yellow] text-game-primary">MercadoLivre Edition</span>
+        <span className="block text-game-primary text-[game-neon-yellow]">MercadoLivre Edition</span>
       </h1>
       
       <div className="my-8">

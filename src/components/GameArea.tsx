@@ -1,7 +1,9 @@
+
 import React from "react";
 import Task, { TaskType } from "./Task";
 import TaskQueuePanel from "./TaskQueuePanel";
 import { TaskInQueue } from "@/hooks/useTaskQueue";
+
 interface ActiveTask {
   id: string;
   type: TaskType;
@@ -14,6 +16,7 @@ interface ActiveTask {
   clicksRequired: number;
   createdAt: number;
 }
+
 interface GameAreaProps {
   gameAreaRef: React.RefObject<HTMLDivElement>;
   activeTasks: ActiveTask[];
@@ -25,7 +28,9 @@ interface GameAreaProps {
   queuePopupOpen: boolean;
   getQueueTaskTimeLeft: (queueTask: TaskInQueue) => number;
   handleQueuePopupComplete: (success: boolean) => void;
+  className?: string;
 }
+
 const GameArea: React.FC<GameAreaProps> = ({
   gameAreaRef,
   activeTasks,
@@ -35,9 +40,35 @@ const GameArea: React.FC<GameAreaProps> = ({
   onTaskStart,
   queueTaskToExec,
   queuePopupOpen,
-  getQueueTaskTimeLeft
-}) => <div ref={gameAreaRef} className="relative bg-[url('https://via.placeholder.com/1000x800?text=Office+Background')] bg-cover bg-center overflow-hidden w-full h-full min-h-[100px]">
-    {activeTasks.map(task => <Task key={task.id} id={task.id} type={task.type} position={task.position} timeLimit={task.timeLimit} onClick={handleTaskClick} onTimeout={handleTaskTimeout} isUrgent={task.isUrgent} clicksRequired={task.clicksRequired} />)}
-    <TaskQueuePanel taskQueue={taskQueue} onTaskStart={onTaskStart} queueTaskToExecId={queueTaskToExec ? queueTaskToExec.id : null} queuePopupOpen={queuePopupOpen} getQueueTaskTimeLeft={getQueueTaskTimeLeft} />
-  </div>;
+  getQueueTaskTimeLeft,
+  handleQueuePopupComplete,
+  className
+}) => (
+  <div 
+    ref={gameAreaRef} 
+    className={`relative bg-[url('https://via.placeholder.com/1000x800?text=Office+Background')] bg-cover bg-center overflow-hidden w-full h-full min-h-[100px] ${className || ''}`}
+  >
+    {activeTasks.map(task => (
+      <Task 
+        key={task.id} 
+        id={task.id} 
+        type={task.type} 
+        position={task.position} 
+        timeLimit={task.timeLimit} 
+        onClick={handleTaskClick} 
+        onTimeout={handleTaskTimeout} 
+        isUrgent={task.isUrgent} 
+        clicksRequired={task.clicksRequired} 
+      />
+    ))}
+    <TaskQueuePanel 
+      taskQueue={taskQueue} 
+      onTaskStart={onTaskStart} 
+      queueTaskToExecId={queueTaskToExec ? queueTaskToExec.id : null} 
+      queuePopupOpen={queuePopupOpen} 
+      getQueueTaskTimeLeft={getQueueTaskTimeLeft}
+    />
+  </div>
+);
+
 export default GameArea;

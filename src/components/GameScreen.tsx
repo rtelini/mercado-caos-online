@@ -5,10 +5,12 @@ import GameArea from './GameArea';
 import { TaskType } from './Task'; // Added this import for TaskType
 import TaskPopup from './TaskPopup'; // Added this import for TaskPopup
 import { useTaskQueue, TaskInQueue } from "@/hooks/useTaskQueue";
+
 interface GameScreenProps {
   onGameOver: (score: number) => void;
   onPause: () => void;
 }
+
 interface ActiveTask {
   id: string;
   type: TaskType;
@@ -21,11 +23,12 @@ interface ActiveTask {
   clicksRequired: number;
   createdAt: number;
 }
+
 const STRESS_MAX = 100;
 const STRESS_INCREASE_ON_FAIL = 15;
 const STRESS_INCREASE_ON_REPUTATION_FAIL = 25;
 const STRESS_DECREASE_ON_SUCCESS = 2;
-const GAME_DURATION_PER_DAY = 60; // 60 segundos por dia
+const GAME_DURATION_PER_DAY = 90; // Changed to 90 seconds per day as requested
 const MAX_DAYS = 90; // 90 dias de experiência
 const QUEUE_TASK_TIME = 12; // tempo máximo (segundos) para realizar cada tarefa na fila
 
@@ -50,6 +53,7 @@ const GameScreen = ({
   const gameTimerRef = useRef<NodeJS.Timeout | null>(null);
   const taskGeneratorRef = useRef<NodeJS.Timeout | null>(null);
   const taskTypes: TaskType[] = ['package_missing', 'wrong_shipping', 'canceled_sale', 'urgent_message', 'coupon_issue', 'system_down', 'reputation_drop', 'duplicate_order'];
+
   const handleQueueTaskTimeout = useCallback((taskId: string, taskType: TaskType) => {
     setScore(prev => prev - 2);
     setStressLevel(prev => prev + 8);
@@ -59,6 +63,7 @@ const GameScreen = ({
       setQueueTaskToExec(null);
     }
   }, [queueTaskToExec]);
+
   const {
     addTaskToQueue,
     removeTaskFromQueue,
@@ -68,6 +73,7 @@ const GameScreen = ({
     onTimeout: handleQueueTaskTimeout,
     timePerQueueTask: QUEUE_TASK_TIME
   });
+
   useEffect(() => {
     startGame();
     return () => {
@@ -76,6 +82,7 @@ const GameScreen = ({
       clearAllQueueTimers();
     };
   }, [clearAllQueueTimers]);
+
   const startGame = () => {
     setScore(0);
     setStressLevel(0);
@@ -88,6 +95,14 @@ const GameScreen = ({
     setQueuePopupOpen(false);
     setQueueTaskToExec(null);
     setGameOver(false);
+    
+    startGameTimer();
+    generateTasks();
+  };
+
+  const startGameTimer = () => {
+    if (gameTimerRef.current) clearInterval(gameTimerRef.current);
+    
     gameTimerRef.current = setInterval(() => {
       setGameTime(prev => {
         const newTime = prev + 1;
@@ -99,29 +114,38 @@ const GameScreen = ({
         return newTime;
       });
     }, 1000);
-    generateTasks();
   };
+
   const completeDay = () => {
     if (gameTimerRef.current) clearInterval(gameTimerRef.current);
     if (taskGeneratorRef.current) clearInterval(taskGeneratorRef.current);
     clearAllQueueTimers();
+    
     setDayScore(score);
     setShowDayComplete(true);
     setActiveTasks([]);
     setChaosMode(false);
+    
     if (score < 0) {
       setTimeout(() => {
         setGameOver(true);
         onGameOver(score);
       }, 1400);
+      return;
     }
+    
+    setTimeout(() => {
+      startNextDay();
+    }, 3000);
   };
+
   const startNextDay = () => {
     if (currentDay >= MAX_DAYS) {
       setGameOver(true);
       onGameOver(score);
       return;
     }
+    
     setCurrentDay(prev => prev + 1);
     setGameTime(0);
     setShowDayComplete(false);
@@ -129,20 +153,14 @@ const GameScreen = ({
     setTaskQueue([]);
     setQueuePopupOpen(false);
     setQueueTaskToExec(null);
-    gameTimerRef.current = setInterval(() => {
-      setGameTime(prev => {
-        const newTime = prev + 1;
-        if (newTime === Math.floor(GAME_DURATION_PER_DAY * 0.7)) setChaosMode(true);
-        if (newTime >= GAME_DURATION_PER_DAY) {
-          completeDay();
-          return 0;
-        }
-        return newTime;
-      });
-    }, 1000);
+    
+    startGameTimer();
     generateTasks();
   };
+
   const generateTasks = () => {
+    if (taskGeneratorRef.current) clearInterval(taskGeneratorRef.current);
+    
     taskGeneratorRef.current = setInterval(() => {
       const baseRate = chaosMode ? 800 : 1600;
       const adjustedRate = Math.max(baseRate - gameTime * 10, chaosMode ? 400 : 800);
@@ -151,6 +169,7 @@ const GameScreen = ({
       }
     }, 100);
   };
+
   const createNewTask = () => {
     if (!gameAreaRef.current) return;
     const safeMargin = 15;
@@ -177,20 +196,24 @@ const GameScreen = ({
     setActiveTasks(prev => [...prev, newTask]);
     setTaskCounter(prev => prev + 1);
   };
+
   const handleTaskClick = useCallback((taskId: string, taskType: TaskType) => {
     setActiveTasks(prevActive => {
       const found = prevActive.find(t => t.id === taskId);
       if (!found) return prevActive;
+      
       const newQueueTask = {
         id: found.id,
         type: found.type,
         timeLimit: QUEUE_TASK_TIME,
         addedToQueueAt: Date.now()
       };
+      
       addTaskToQueue(taskQueue, newQueueTask, setTaskQueue);
       return prevActive.filter(t => t.id !== taskId);
     });
   }, [addTaskToQueue, taskQueue]);
+
   const handleTaskTimeout = useCallback((taskId: string) => {
     const task = activeTasks.find(t => t.id === taskId);
     if (task) {
@@ -199,15 +222,18 @@ const GameScreen = ({
     }
     setActiveTasks(prev => prev.filter(t => t.id !== taskId));
   }, [activeTasks]);
+
   const handleQueueTaskStart = (queueTask: TaskInQueue) => {
     if (!queuePopupOpen) {
       setQueueTaskToExec(queueTask);
       setQueuePopupOpen(true);
     }
   };
+
   const handleQueuePopupComplete = useCallback((success: boolean) => {
     if (queueTaskToExec) {
       removeTaskFromQueue(queueTaskToExec.id, setTaskQueue);
+      
       if (success) {
         setScore(prev => prev + 1);
         setStressLevel(prev => Math.max(0, prev - STRESS_DECREASE_ON_SUCCESS));
@@ -215,16 +241,19 @@ const GameScreen = ({
         setScore(prev => prev - 2);
         setStressLevel(prev => prev + 8);
       }
+      
       setQueueTaskToExec(null);
       setQueuePopupOpen(false);
     }
   }, [queueTaskToExec, removeTaskFromQueue]);
+
   useEffect(() => {
     if (score < 0 && showDayComplete && !gameOver) {
       setGameOver(true);
       onGameOver(score);
     }
   }, [score, showDayComplete, onGameOver, gameOver]);
+
   useEffect(() => {
     if (stressLevel >= STRESS_MAX && !gameOver) {
       if (gameTimerRef.current) clearInterval(gameTimerRef.current);
@@ -234,21 +263,64 @@ const GameScreen = ({
       onGameOver(score);
     }
   }, [stressLevel, score, onGameOver, gameOver, clearAllQueueTimers]);
+
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
     const secs = (seconds % 60).toString().padStart(2, '0');
     return `${mins}:${secs}`;
   };
-  return <div className="relative flex flex-col w-full h-screen max-h-[80vh] my-0 bg-stone-50 rounded-full">
-      <GameHUD currentDay={currentDay} maxDays={MAX_DAYS} gameTime={gameTime} chaosMode={chaosMode} score={score} onPause={onPause} formatTime={formatTime} />
+
+  return (
+    <div className="relative flex flex-col w-full h-screen max-h-[80vh] my-0 bg-stone-50 rounded-full">
+      <GameHUD 
+        currentDay={currentDay} 
+        maxDays={MAX_DAYS} 
+        gameTime={gameTime} 
+        chaosMode={chaosMode} 
+        score={score} 
+        onPause={onPause} 
+        formatTime={formatTime} 
+      />
       <StressBar stressLevel={stressLevel} />
-      <GameArea gameAreaRef={gameAreaRef} activeTasks={activeTasks} handleTaskClick={handleTaskClick} handleTaskTimeout={handleTaskTimeout} taskQueue={taskQueue} onTaskStart={handleQueueTaskStart} queueTaskToExec={queueTaskToExec} queuePopupOpen={queuePopupOpen} getQueueTaskTimeLeft={getQueueTaskTimeLeft} handleQueuePopupComplete={handleQueuePopupComplete} className="mx-0 py-[240px]" />
-      {/* Novo painel para o pop-up, fora do tabuleiro */}
-      {queueTaskToExec && queuePopupOpen && <div className="w-full flex justify-center mt-6">
+      <GameArea 
+        gameAreaRef={gameAreaRef} 
+        activeTasks={activeTasks} 
+        handleTaskClick={handleTaskClick} 
+        handleTaskTimeout={handleTaskTimeout} 
+        taskQueue={taskQueue} 
+        onTaskStart={handleQueueTaskStart} 
+        queueTaskToExec={queueTaskToExec} 
+        queuePopupOpen={queuePopupOpen} 
+        getQueueTaskTimeLeft={getQueueTaskTimeLeft} 
+        handleQueuePopupComplete={handleQueuePopupComplete} 
+        className="mx-0 py-[240px]" 
+      />
+      {queueTaskToExec && queuePopupOpen && (
+        <div className="w-full flex justify-center mt-6">
           <div className="max-w-xl w-full">
-            <TaskPopup taskType={queueTaskToExec.type} onComplete={handleQueuePopupComplete} />
+            <TaskPopup 
+              taskType={queueTaskToExec.type} 
+              onComplete={handleQueuePopupComplete} 
+            />
           </div>
-        </div>}
-    </div>;
+        </div>
+      )}
+      
+      {showDayComplete && (
+        <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-xl shadow-2xl text-center animate-fade-in">
+            <h2 className="text-2xl font-bold mb-3">Dia {currentDay} Concluído!</h2>
+            <p className="text-xl mb-4">Pontuação: {dayScore}</p>
+            {score < 0 ? (
+              <p className="text-red-500 font-bold">Fim de Jogo - Pontuação Negativa!</p>
+            ) : (
+              <p className="text-blue-500">Preparando próximo dia...</p>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
+
 export default GameScreen;

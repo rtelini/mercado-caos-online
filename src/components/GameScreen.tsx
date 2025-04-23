@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import GameHUD from './GameHUD';
 import StressBar from './StressBar';
@@ -296,7 +297,7 @@ const GameScreen = ({
         className="mx-0 py-[240px]" 
       />
       {queueTaskToExec && queuePopupOpen && (
-        <div className="w-full flex justify-center mt-6">
+        <div className="fixed inset-0 flex items-center justify-center z-50">
           <div className="max-w-xl w-full">
             <TaskPopup 
               taskType={queueTaskToExec.type} 

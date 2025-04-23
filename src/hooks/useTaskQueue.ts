@@ -31,8 +31,7 @@ export function useTaskQueue({ onTimeout, timePerQueueTask }: UseTaskQueueOption
       // Atualiza a fila usando o setState diretamente
       setQueue(prevQueue => [...prevQueue, { ...task, timeLimit: timePerQueueTask, addedToQueueAt: Date.now() }]);
       
-      // Retorna a nova fila para compatibilidade com o código existente
-      return [...queue, task];
+      return queue; // Return the original queue, not a new one
     },
     [onTimeout, timePerQueueTask]
   );

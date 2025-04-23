@@ -8,6 +8,7 @@ import GameDayComplete from './GameDayComplete';
 import { useGameState } from '@/hooks/useGameState';
 import { useTaskGenerator } from '@/hooks/useTaskGenerator';
 import { useTaskQueue, TaskInQueue } from "@/hooks/useTaskQueue";
+import { TaskType } from './Task'; // Add this import
 
 interface GameScreenProps {
   onGameOver: (score: number) => void;

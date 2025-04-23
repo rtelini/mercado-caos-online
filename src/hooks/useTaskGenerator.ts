@@ -7,7 +7,7 @@ const taskTypes: TaskType[] = ['package_missing', 'wrong_shipping', 'canceled_sa
 
 export const useTaskGenerator = (
   taskCounter: number,
-  setTaskCounter: (value: number) => void,
+  setTaskCounter: (value: React.SetStateAction<number>) => void,
   setActiveTasks: (value: React.SetStateAction<ActiveTask[]>) => void
 ) => {
   const createNewTask = useCallback(() => {
